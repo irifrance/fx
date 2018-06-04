@@ -7,15 +7,15 @@ import (
 )
 
 const (
-	iBits  = 63 - frBits
-	frMask = (1 << frBits) - 1
-	iMask  = ((1 << iBits) - 1) << frBits
+	iBits  = 63 - FrBits
+	frMask = (1 << FrBits) - 1
+	iMask  = ((1 << iBits) - 1) << FrBits
 )
 
 const (
 	Sign = -1
 	Zero = 0
-	One  = 1 << frBits
+	One  = 1 << FrBits
 	Iota = 1
 	Max  = iMask | frMask
 )
@@ -24,7 +24,7 @@ type T int64
 
 func Int(i int) T {
 	i &= (1 << iBits) - 1
-	return T(i) << frBits
+	return T(i) << FrBits
 }
 
 func Float64(f float64) T {
@@ -51,7 +51,7 @@ func (t T) String() string {
 	}
 	ds := decimal(int64(t & frMask))
 	f := string(ds[1:])
-	i := fmt.Sprintf("%d", (t>>frBits)+T((ds[0]-'0')))
+	i := fmt.Sprintf("%d", (t>>FrBits)+T((ds[0]-'0')))
 	return strings.Join([]string{s, i, ".", f}, "")
 }
 
@@ -106,14 +106,14 @@ func (a T) Int() T {
 func (a T) Mul(b T) T {
 	s, aa, ab := mulSign(a, b)
 	low, high := mulBits(uint64(aa), uint64(ab))
-	f := (high << (iBits + 1)) | (low >> frBits) + ((low >> (frBits - 1)) & 1)
+	f := (high << (iBits + 1)) | (low >> FrBits) + ((low >> (FrBits - 1)) & 1)
 	return s * T(f)
 }
 
 func (a T) Div(b T) T {
 	s, aa, bb := mulSign(a, b)
-	u := &u128{hi: uint64(aa) >> (64 - frBits), lo: uint64(aa) & ((1 << (iBits + 1)) - 1)}
-	u.lo <<= frBits
+	u := &u128{hi: uint64(aa) >> (64 - FrBits), lo: uint64(aa) & ((1 << (iBits + 1)) - 1)}
+	u.lo <<= FrBits
 	v := u.divBits(uint64(bb))
 	return s * T(v)
 }

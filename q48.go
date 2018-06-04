@@ -6,13 +6,13 @@
 package fx
 
 const (
-	Pi = 884279719003555
-	E  = 765128314358509
+	Pi    = 884279719003555
+	E     = 765128314358509
 	Sqrt2 = 398065729532861
 )
 
 const (
-	frBits = 48
+	FrBits = 48
 )
 
 var cordicAtans = []T{
@@ -64,7 +64,6 @@ var cordicAtans = []T{
 	8,
 	4,
 	2,
-	
 }
 
 var cordicKs = []T{
@@ -116,5 +115,4 @@ var cordicKs = []T{
 	170926505739102,
 	170926505739102,
 	170926505739102,
-	
 }
