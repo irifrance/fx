@@ -1,6 +1,7 @@
 package fx
 
 import (
+	"math"
 	"math/rand"
 	"testing"
 )
@@ -51,9 +52,21 @@ func TestInvMulClose(t *testing.T) {
 		n := Int(i)
 		f := n.Mul(n.Inv())
 		e := One - f
-		if e > Iota<<9 {
-			t.Logf("%s * %s = %s\n", n, n.Inv(), e)
+		if e > Iota<<10 {
+			t.Errorf("%s * %s = %s\n", n, n.Inv(), e)
 		}
+	}
+}
 
+func TestFloat64Conv(t *testing.T) {
+	N := 1024
+	eps := 1e-16
+	for i := 0; i < N; i++ {
+		f := rand.Float64() * (1 << iBits)
+		n := Float64(f)
+		nf := n.Float64()
+		if math.Abs(f-nf) > eps {
+			t.Errorf("%f -> %s -> %f: e %0.16f", f, n, nf, math.Abs(f-nf))
+		}
 	}
 }

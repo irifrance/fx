@@ -2,6 +2,7 @@ package fx
 
 import (
 	"fmt"
+	"math"
 	"strings"
 )
 
@@ -25,6 +26,22 @@ type T int64
 func Int(i int) T {
 	i &= (1 << iBits) - 1
 	return T(i) << frBits
+}
+
+func Float64(f float64) T {
+	s := T(Iota)
+	if f < 0.0 {
+		f = -f
+		s = Sign
+	}
+	fone := float64(One)
+	g := math.Floor(fone*f + 0.5)
+	return s * T(int64(g))
+}
+
+func (t T) Float64() float64 {
+	fone := float64(One)
+	return float64(t) / fone
 }
 
 func (t T) String() string {
