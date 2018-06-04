@@ -1,6 +1,9 @@
 package fx
 
-import "math/bits"
+import (
+	"fmt"
+	"math/bits"
+)
 
 type u128 struct {
 	lo uint64
@@ -18,7 +21,7 @@ func (n *u128) divBits(m uint64) uint64 {
 	m128.lshift(uint(ns))
 
 	q128 := &u128{}
-	for ns > 0 {
+	for ns >= 0 {
 		q128.lshift(1)
 		if m128.leq(n) {
 			q128.lo |= 1
@@ -73,11 +76,15 @@ func (u *u128) rshift(s uint) *u128 {
 func (u *u128) lshift(s uint) *u128 {
 	if s < 64 {
 		u.hi <<= s
-		u.hi |= u.lo << (64 - s)
+		u.hi |= u.lo >> (64 - s)
 		u.lo <<= s
 		return u
 	}
 	u.hi = u.lo << (s - 64)
 	u.lo = 0
 	return u
+}
+
+func (u *u128) String() string {
+	return fmt.Sprintf("%064b%064b", u.hi, u.lo)
 }

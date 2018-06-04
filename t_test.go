@@ -1,6 +1,7 @@
 package fx
 
 import (
+	"math/rand"
 	"testing"
 )
 
@@ -13,10 +14,9 @@ func TestString(t *testing.T) {
 }
 
 func TestMulId(t *testing.T) {
-	N := 1
+	N := 1024
 	for i := 0; i < N; i++ {
-		//n := T(rand.Int63n((1 << 63) - 1))
-		n := T(One)
+		n := T(rand.Int63n((1 << 63) - 1))
 
 		m := n.Mul(One)
 		if n != m {
@@ -26,5 +26,22 @@ func TestMulId(t *testing.T) {
 }
 
 func TestDivId(t *testing.T) {
-	t.Logf("%s", T(One).Div(One))
+	N := 1024
+	for i := 0; i < N; i++ {
+		n := T(rand.Int63n((1 << 63) - 1))
+		m := n.Div(One)
+		if n != m {
+			t.Errorf("%d: One isn't identify for %s\no %b\nm %b", i, n, n, m)
+		}
+	}
+}
+
+func TestInvPo2(t *testing.T) {
+	for i := uint(0); i < iBits; i++ {
+		n := T(One << i)
+		m := n.Inv().Inv()
+		if m != n {
+			t.Errorf("%d: inv(inv(%s)) gave %s\n", i, n, m)
+		}
+	}
 }

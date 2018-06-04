@@ -28,15 +28,17 @@ func (t T) String() string {
 		t = -t
 		s = "-"
 	}
-	i := fmt.Sprintf("%d", t>>frBits)
-	f := string(decimal(int64(t & frMask)))
+	ds := decimal(int64(t & frMask))
+	f := string(ds[1:])
+	i := fmt.Sprintf("%d", (t>>frBits)+T((ds[0]-'0')))
 	return strings.Join([]string{s, i, ".", f}, "")
 }
 
 func decimal(v int64) []byte {
 	u := v
-	var buf [24]byte
-	n := 0
+	var buf [32]byte
+	buf[0] = '0'
+	n := 1
 	o := int64(One)
 	o1 := o
 	for {
@@ -51,17 +53,23 @@ func decimal(v int64) []byte {
 	u *= 10
 	for o > 0 {
 		buf[n] = '0' + byte(u/o)
+		m := n
+		for buf[m] == '0'+10 {
+			buf[m] = '0'
+			buf[m-1]++
+			m--
+		}
 		u = u % o
 		o /= 10
 		n++
 	}
 	m := n - 1
-	for m >= 0 && buf[m] == '0' {
+	for m >= 1 && buf[m] == '0' {
 		m--
 	}
 	n = m + 1
-	if n == 0 {
-		n = 1
+	if n == 1 {
+		n = 2
 	}
 	return buf[:n]
 }
@@ -83,10 +91,14 @@ func (a T) Mul(b T) T {
 
 func (a T) Div(b T) T {
 	s, aa, bb := mulSign(a, b)
-	u := &u128{hi: uint64(aa) >> (iBits + 1), lo: uint64(aa) & ((1 << (iBits + 1)) - 1)}
+	u := &u128{hi: uint64(aa) >> (64 - frBits), lo: uint64(aa) & ((1 << (iBits + 1)) - 1)}
 	u.lo <<= frBits
 	v := u.divBits(uint64(bb))
 	return s * T(v)
+}
+
+func (a T) Inv() T {
+	return T(One).Div(a)
 }
 
 // Sqrt
