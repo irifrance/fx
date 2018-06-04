@@ -22,6 +22,11 @@ const (
 
 type T int64
 
+func Int(i int) T {
+	i &= (1 << iBits) - 1
+	return T(i) << frBits
+}
+
 func (t T) String() string {
 	s := ""
 	if t < 0 {

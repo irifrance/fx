@@ -45,3 +45,15 @@ func TestInvPo2(t *testing.T) {
 		}
 	}
 }
+
+func TestInvMulClose(t *testing.T) {
+	for i := 1; i < (1 << iBits); i++ {
+		n := Int(i)
+		f := n.Mul(n.Inv())
+		e := One - f
+		if e > Iota<<9 {
+			t.Logf("%s * %s = %s\n", n, n.Inv(), e)
+		}
+
+	}
+}

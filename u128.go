@@ -30,6 +30,10 @@ func (n *u128) divBits(m uint64) uint64 {
 		m128.rshift(1)
 		ns--
 	}
+
+	if m128.leq(n) {
+		q128.lo++
+	}
 	return q128.lo //
 }
 
