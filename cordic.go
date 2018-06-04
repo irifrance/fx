@@ -1,5 +1,8 @@
 package fx
 
+/*
+// BUG(wsc) doesn't work with different qs, need to recompile
+
 //
 //	below values computed by:
 //  	atan2ps = make([]T, frBits)
@@ -52,7 +55,7 @@ var cordicKs = []T{
 	2734824091825639, 2734824091825639, 2734824091825639, 2734824091825639,
 	2734824091825639, 2734824091825639, 2734824091825639, 2734824091825639,
 	2734824091825639, 2734824091825639, 2734824091825639, 2734824091825639}
-
+*/
 type cordic struct {
 	x, y, z T
 }

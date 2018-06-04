@@ -7,7 +7,6 @@ import (
 )
 
 const (
-	frBits = 52
 	iBits  = 63 - frBits
 	frMask = (1 << frBits) - 1
 	iMask  = ((1 << iBits) - 1) << frBits
