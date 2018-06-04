@@ -3,7 +3,9 @@
 // The fixed point numbers support multiplication, division, float64
 // conversion, Sin, Cos, Tan, Atan, const Pi, Sqrt, const Sqrt2
 //
-// Build flags may be used to define different q's (number of fractional bits).
+// Build flags may be used to define different q's (number of fractional bits),
+// and a generator program generates the necessary constants for more options of
+// q values.
 //
 // Using Fixed Point Numbers
 //
@@ -19,8 +21,9 @@
 //  - slower multiplication (5 native multiplies + shifts and adds)
 //  - even slower division
 //  - slower trigonometric functions (based on Cordic rotation currently)
+//  - less general math support
 //
 // Package fx was developed primarily in support of an application
 // which needed replicability accross platforms (and programming languages)
-// of trigonometric results.
+// of some trigonometric functions and which targeted hardware implementations.
 package fx

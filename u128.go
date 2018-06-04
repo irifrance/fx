@@ -10,6 +10,7 @@ type u128 struct {
 	hi uint64
 }
 
+// NB this is busted for frBits <= 32
 func (n *u128) divBits(m uint64) uint64 {
 	if n.hi == 0 {
 		return n.lo / m

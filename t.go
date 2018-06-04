@@ -128,6 +128,20 @@ func (a T) Inv() T {
 
 // SinCos
 
+func (a T) Sin() T {
+	s, _ := a.SinCos()
+	return s
+}
+
+func (a T) Cos() T {
+	_, c := a.SinCos()
+	return c
+}
+
+func (a T) SinCos() (T, T) {
+	return cordicSinCos(a)
+}
+
 // Pi
 
 // e

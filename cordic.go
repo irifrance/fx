@@ -1,7 +1,11 @@
 package fx
 
+// implementations of
+// CORDIC (Coordinate rotation digital computer) algorithm
+// for fixed point computations of trig functions.
+
 // NB: see qXX.go for cordic constant tables "cordicAtans"
-// and "cordicKs"
+// and "cordicKs" and cmd/genq/ for their generation.
 
 // w: angle in radians
 func cordicSinCos(w T) (sin, cos T) {
@@ -25,11 +29,14 @@ func cordicSinCos(w T) (sin, cos T) {
 			z -= cordicAtans[i]
 		}
 	}
+	// more precise to multiply here since the constant
+	// is less than one
 	return y.Mul(cordicKs[FrBits-1]), x.Mul(cordicKs[FrBits-1])
 }
 
 func cordicAtan(x, y T) T {
 	var tmp, z T
+	z = Pi / 2
 	for i := uint(0); i < FrBits; i++ {
 		if y < 0 {
 			tmp = x - y>>i
@@ -43,5 +50,5 @@ func cordicAtan(x, y T) T {
 			z += cordicAtans[i]
 		}
 	}
-	return z
+	return Pi - z
 }
