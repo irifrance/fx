@@ -1,3 +1,6 @@
+// Copyright 2018 Iri France SAS. All rights reserved.  Use of this source code
+// is governed by a license that can be found in the License file.
+
 package fx
 
 import (
@@ -23,6 +26,11 @@ const (
 type T int64
 
 func Int(i int) T {
+	i &= (1 << iBits) - 1
+	return T(i) << FrBits
+}
+
+func Uint(i uint) T {
 	i &= (1 << iBits) - 1
 	return T(i) << FrBits
 }
