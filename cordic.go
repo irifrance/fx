@@ -45,11 +45,24 @@ func cordicSinCos(w T) (sin, cos T) {
 }
 
 func cordicAtan2(x, y T) T {
-	var z = T(Pi / 2) // start at top of range to scale w.r.t. pi.
+	var z = T(Pi / 2) // start at top of range to scale w.r.t. pi w/out Mul
+	if y == 0 {
+		if x > 0 {
+			return z
+		}
+		if x < 0 {
+			return -z
+		}
+		panic("undefined atan")
+	}
 	s := T(Iota)
+	var add = T(Zero)
 	if y < 0 {
-		s = -s
 		y = -y
+		s = -s
+		add = -Pi
+		if x < 0 {
+		}
 	}
 	if x < 0 {
 		s = -s
@@ -69,5 +82,5 @@ func cordicAtan2(x, y T) T {
 			z -= cordicAtans[i]
 		}
 	}
-	return s * z
+	return (s * (z + add))
 }

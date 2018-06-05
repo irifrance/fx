@@ -23,14 +23,28 @@ func TestCordicSinCos(t *testing.T) {
 	}
 }
 
-func TestCordicAtan2(t *testing.T) {
-	N := 4
+func TestCordicAtan2YNeg(t *testing.T) {
+	N := 512
 	for i := 0; i < N; i++ {
 		fi := (rand.Float64() - 0.5) * 2 * math.Pi
-
 		fat := math.Atan2(fi, -1.0)
 		phi := Float64(fi)
 		at := cordicAtan2(phi, -One)
-		t.Logf("%s fat %f at %s\n", phi, fat, at)
+		if math.Abs(at.Float64()-fat) > 1e-14 {
+			t.Errorf("%s fat %f at %s\n", phi, fat, at)
+		}
+	}
+}
+
+func TestCordicAtan2YPos(t *testing.T) {
+	N := 512
+	for i := 0; i < N; i++ {
+		fi := (rand.Float64() - 0.5) * 2 * math.Pi
+		fat := math.Atan2(fi, 1.0)
+		phi := Float64(fi)
+		at := cordicAtan2(phi, One)
+		if math.Abs(at.Float64()-fat) > 1e-14 {
+			t.Errorf("%s fat %f at %s\n", phi, fat, at)
+		}
 	}
 }
