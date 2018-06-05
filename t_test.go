@@ -70,3 +70,10 @@ func TestFloat64Conv(t *testing.T) {
 		}
 	}
 }
+
+func TestSqrt(t *testing.T) {
+	a := Int(9)
+	t.Logf("sqrt 9 %s ^2 %s\n", Sqrt(a), Sqrt(a).Mul(Sqrt(a)))
+	t.Logf("sqrt2const from float %s calculated %s\n", T(Sqrt2), Sqrt(One+One))
+	t.Logf("sqrt(0.5) vs Sqrt2.Inv(): %s %s\n", Sqrt(One/2), T(Sqrt2).Inv())
+}

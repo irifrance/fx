@@ -115,6 +115,14 @@ func (a T) Round() int64 {
 	return int64((a >> FrBits) + c)
 }
 
+// Abs returns the absolute value of a.
+func (a T) Abs() T {
+	if a < 0 {
+		a = -a
+	}
+	return a
+}
+
 // Mul computes multiplication of a*b.
 func (a T) Mul(b T) T {
 	s, aa, ab := mulSign(a, b)
@@ -138,32 +146,74 @@ func (a T) Inv() T {
 	return T(One).Div(a)
 }
 
-// TBD: Sqrt
+// Sqrt computes the square root of a.  If a is negative
+// Sqrt panics.
+func Sqrt(a T) T {
+	if a < 0 {
+		panic("sqrt negative")
+	}
+	const steps = 6
+
+	var x T = One
+	var t T
+	for i := 0; i <= steps; i++ {
+		t = a.Div(x) + x
+		x = t >> 1
+	}
+	return x
+}
 
 // Sin computes sin(a).
+//
+// a must be in the range
+//
+//  [-2*Pi..2*Pi]
+//
+// or Sin panics
 func Sin(a T) T {
 	s, _ := SinCos(a)
 	return s
 }
 
 // Cos computes cos(a)
+//
+// a must be in the range
+//
+//  [-2*Pi..2*Pi]
+//
+// or Cos panics
 func Cos(a T) T {
 	_, c := SinCos(a)
 	return c
 }
 
 // SinCos computes sin(a), cos(a)
+//
+// a must be in the range
+//
+//  [-2*Pi..2*Pi]
+//
+// or SinCos panics
 func SinCos(a T) (T, T) {
 	return cordicSinCos(a)
 }
 
 // Tan computes the tangent of a.
+//
+// a must be in the range
+//
+//  [-2*Pi..2*Pi]
+//
+// or Tan panics
 func Tan(a T) T {
 	s, c := SinCos(a)
 	return s.Div(c)
 }
 
 // Atan2 computes the arctangent of x/y
+//
+// Atan2 distinguishes the result based on the signs of
+// both x and y.
 func Atan2(x, y T) T {
 	return cordicAtan2(x, y)
 }
