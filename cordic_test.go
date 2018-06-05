@@ -9,7 +9,7 @@ import (
 func TestCordicSinCos(t *testing.T) {
 	N := 1024
 	for i := 0; i < N; i++ {
-		fi := rand.Float64()
+		fi := (rand.Float64() - 0.5) * 2 * math.Pi
 		phi := Float64(fi)
 		x, y := cordicSinCos(phi)
 		se := math.Abs(x.Float64() - math.Sin(fi))
@@ -23,13 +23,14 @@ func TestCordicSinCos(t *testing.T) {
 	}
 }
 
-func TestCordicAtan(t *testing.T) {
-	N := 32
+func TestCordicAtan2(t *testing.T) {
+	N := 4
 	for i := 0; i < N; i++ {
-		fi := -rand.Float64()
-		fat := math.Atan(fi)
+		fi := (rand.Float64() - 0.5) * 2 * math.Pi
+
+		fat := math.Atan2(fi, -1.0)
 		phi := Float64(fi)
-		at := cordicAtan(phi, One)
-		t.Logf("fat %f at %s\n", fat, at)
+		at := cordicAtan2(phi, -One)
+		t.Logf("%s fat %f at %s\n", phi, fat, at)
 	}
 }

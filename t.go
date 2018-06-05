@@ -95,14 +95,27 @@ func decimal(v int64) []byte {
 	return buf[:n]
 }
 
+// Frac returns the fractional part of a.
 func (a T) Frac() T {
 	return a & (frMask | Sign)
 }
 
+// Int returns the int part of a.
 func (a T) Int() T {
 	return a & (iMask | Sign)
 }
 
+// Round returns a rounded to the nearest integer
+// as an int64.
+func (a T) Round() int64 {
+	c := T(Zero)
+	if a&(One>>1) != 0 {
+		c = Iota
+	}
+	return int64((a >> FrBits) + c)
+}
+
+// Mul computes multiplication of a*b.
 func (a T) Mul(b T) T {
 	s, aa, ab := mulSign(a, b)
 	low, high := mulBits(uint64(aa), uint64(ab))
@@ -110,6 +123,8 @@ func (a T) Mul(b T) T {
 	return s * T(f)
 }
 
+// Div computes division.  Note if b is a power of 2,
+// then you can just shift.
 func (a T) Div(b T) T {
 	s, aa, bb := mulSign(a, b)
 	u := &u128{hi: uint64(aa) >> (64 - FrBits), lo: uint64(aa) & ((1 << (iBits + 1)) - 1)}
@@ -118,36 +133,48 @@ func (a T) Div(b T) T {
 	return s * T(v)
 }
 
+// Inv computes and returns 1/a.
 func (a T) Inv() T {
 	return T(One).Div(a)
 }
 
-// Sqrt
+// TBD: Sqrt
 
-// Atan
-
-// SinCos
-
-func (a T) Sin() T {
-	s, _ := a.SinCos()
+// Sin computes sin(a).
+func Sin(a T) T {
+	s, _ := SinCos(a)
 	return s
 }
 
-func (a T) Cos() T {
-	_, c := a.SinCos()
+// Cos computes cos(a)
+func Cos(a T) T {
+	_, c := SinCos(a)
 	return c
 }
 
-func (a T) SinCos() (T, T) {
+// SinCos computes sin(a), cos(a)
+func SinCos(a T) (T, T) {
 	return cordicSinCos(a)
 }
 
-// Pi
+// Tan computes the tangent of a.
+func Tan(a T) T {
+	s, c := SinCos(a)
+	return s.Div(c)
+}
 
-// e
+// Atan2 computes the arctangent of x/y
+func Atan2(x, y T) T {
+	return cordicAtan2(x, y)
+}
 
-// Sqrt2
+// Atan computes the arc-tangent of a,
+// ie the angle w for which sin(w)/cos(w) = a.
+func Atan(a T) T {
+	return Atan2(a, One)
+}
 
+// returns sign, abs(a), abs(b) as T.
 func mulSign(a, b T) (s, absA, absB T) {
 	s = T(1)
 	if a^b < 0 {
@@ -164,6 +191,13 @@ func mulSign(a, b T) (s, absA, absB T) {
 	return
 }
 
+// Returns the full 128 bit result of x * y in low, high.
+//
+// Note(wsc) some people do something similar and quote hackers delight, i didn't grok
+// the casts.  This is just derived from multiplying 32 bit chunks piecewise
+// and then factoring away the computations specific to low and replacing them
+// with x*y.  Apparently, about the same number of operations, and the same
+// number of multiplies as the Hacker's Delight version -- without casts!.
 func mulBits(x, y uint64) (low, high uint64) {
 	const (
 		shift = 32

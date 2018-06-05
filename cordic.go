@@ -9,8 +9,18 @@ package fx
 
 // w: angle in radians
 func cordicSinCos(w T) (sin, cos T) {
-	if w < -Pi/2 || w > Pi/2 {
-		panic("w out of range")
+	if w < -Pi || w > Pi {
+		// what to do about this?  need to support
+		// something like modf I guess...
+		panic("outside range")
+	}
+	s := T(Iota)
+	if w > Pi/2 {
+		w -= Pi
+		s = -s
+	} else if w < -Pi/2 {
+		w += Pi
+		s = -s
 	}
 	x := T(One)
 	y := T(Zero)
@@ -31,24 +41,33 @@ func cordicSinCos(w T) (sin, cos T) {
 	}
 	// more precise to multiply here since the constant
 	// is less than one
-	return y.Mul(cordicKs[FrBits-1]), x.Mul(cordicKs[FrBits-1])
+	return s * y.Mul(cordicKs[FrBits-1]), s * x.Mul(cordicKs[FrBits-1])
 }
 
-func cordicAtan(x, y T) T {
-	var tmp, z T
-	z = Pi / 2
+func cordicAtan2(x, y T) T {
+	var z = T(Pi / 2) // start at top of range to scale w.r.t. pi.
+	s := T(Iota)
+	if y < 0 {
+		s = -s
+		y = -y
+	}
+	if x < 0 {
+		s = -s
+		x = -x
+	}
+	var tmp T
 	for i := uint(0); i < FrBits; i++ {
 		if y < 0 {
 			tmp = x - y>>i
 			y = y + x>>i
 			x = tmp
-			z -= cordicAtans[i]
+			z += cordicAtans[i]
 		} else {
 			tmp = x + y>>i
 			y = y - x>>i
 			x = tmp
-			z += cordicAtans[i]
+			z -= cordicAtans[i]
 		}
 	}
-	return Pi - z
+	return s * z
 }

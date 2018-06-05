@@ -13,7 +13,9 @@
 //
 //  - uniform precision
 //  - replicability across platforms
-//  - built-in addition, subtraction, shifting using machine integer ops.
+//  - built-in addition, subtraction, bit manipulation
+//  - precise power of two multiplication/division by bit shifting
+//  - possibility to choose a q with greater precision than float64s.
 //
 // with the following costs w.r.t. floats
 //
@@ -25,5 +27,9 @@
 //
 // Package fx was developed primarily in support of an application
 // which needed replicability accross platforms (and programming languages)
-// of some trigonometric functions and which targeted hardware implementations.
+// of some trigonometric functions and which targeted hardware implementability.
+//
+// To date, most emphasis has been on clarity, precision, and correctness.
+// Optimisations for speed will be added on-demand, or on-offer of
+// contributions.
 package fx
