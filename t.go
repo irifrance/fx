@@ -16,22 +16,27 @@ const (
 )
 
 const (
-	Sign = -1
-	Zero = 0
-	One  = 1 << FrBits
-	Iota = 1
-	Max  = iMask | frMask
+	Sign T = -1
+	Zero T = 0
+	One  T = 1 << FrBits
+	Iota T = 1
+	Max  T = iMask | frMask
 )
 
 type T int64
 
 func Int(i int) T {
-	i &= (1 << iBits) - 1
+	i &= (1 << (iBits + 1)) - 1
 	return T(i) << FrBits
 }
 
 func Uint(i uint) T {
-	i &= (1 << iBits) - 1
+	i &= (1 << (iBits + 1)) - 1
+	return T(i) << FrBits
+}
+
+func Int64(i int64) T {
+	i &= (1 << (iBits + 1)) - 1
 	return T(i) << FrBits
 }
 
